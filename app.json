@@ -13,8 +13,10 @@
     "pages/driverPublishHistory/driverPublishHistory",
     "pages/driverPublishDetail/driverPublishDetail",
     "pages/other/bbs/bbs",
+    "pages/other/bbs/bbsPublish",
     "pages/capsule-bar/index",
-    "pages/other/driverAuth/driverAuth"
+    "pages/other/driverAuth/driverAuth",
+    "pages/other/bbs/bbsDetail"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -49,7 +51,8 @@
     "van-button": "@vant/weapp/button/index",
     "van-search": "@vant/weapp/search/index",
     "van-tab": "@vant/weapp/tab/index",
-    "van-tabs": "@vant/weapp/tabs/index"
+    "van-tabs": "@vant/weapp/tabs/index",
+    "cu-custom": "/colorui/components/cu-custom"
   },
   "sitemapLocation": "sitemap.json",
   "permission": {

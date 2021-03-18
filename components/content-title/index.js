@@ -37,7 +37,13 @@ Component({
     //   });
     // }
     addblog: function(e) {
-      console.log(this.properties.blogtype)
+      // wx.navigateTo({
+      //   url: '/other/bbs/bbsPublish',
+      // })
+      console.log('我点击了此事件')
+      wx.navigateTo({
+        url: './bbsPublish'
+      })
     }
   }
 });

@@ -1,8 +1,9 @@
 <!--pages/other/bbs/bbs.wxml-->
+<wxs module="util" src='../../../utils/util.wxs'></wxs>
 <view class="container">
   <content-title name="拼车" describe="BBS" blogtype="{{blogtype}}">
 
-    <content-card name="欢迎━(*｀∀´*)ノ亻!">
+    <content-card name="欢迎━(*｀∀´*)ノ亻!" >
       <l-sticky scrollTop="{{scrollTop}}" mode="css">
 
         <l-sticky-item l-header-sticky-class="l-header-sticky-class">
@@ -20,13 +21,13 @@
                   <l-segment-item tab="bbs" key="one" badge-count="95" l-class-badge="badge-view" />
                 </l-segment>
 
-                <block wx:for="{{dynamicCard}}" wx:key="index">
-                  <view style="margin-top:30rpx" slot="body">
+                <block wx:for="{{blogList}}" wx:key="index">
+                  <view style="margin-top:30rpx" slot="body" data-item="{{item}}" bindtap="lookBlogDetail">
                     <l-card type="avatar" l-class="card"
-                      image="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1549711852726&di=6b454cec0b57f62d46089487454fa56f&imgtype=0&src=http%3A%2F%2Fimg3.duitang.com%2Fuploads%2Fitem%2F201609%2F14%2F20160914062816_SC8KU.jpeg"
-                      title="七月在夏天" describe="18个小时前">
+                      image="{{item.User.avatar_url}}"
+                      title="{{item.User.nick_name}}" describe="{{util.getDateDiff(item.created_at)}}" >
                       <view class="avter-content">
-                        去潮汕机场的有人吗？滴滴我~~~~~~
+                        {{item.content}}
                       </view>
                       <view class="avter-share-container">
                         <view class="like-container">
