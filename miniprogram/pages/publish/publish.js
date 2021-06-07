@@ -87,25 +87,28 @@ Page({
   },
 
   driverPublish: function () {
-    this.getSetting()
-    .then(() => {
-      wx.navigateTo({
+    wx.navigateTo({
         url: '../driverPublishHistory/driverPublishHistory',
       })
-    })
-    .catch(() => {
-      wx.showModal({
-        title: '授权提示',
-        content: '此程序需要授权才能继续进行使用！点击确定进行授权',
-        success(res) {
-          if (res.confirm) {
-            wx.navigateTo({
-              url: '../authorization/authorization',
-            })
-          }
-        }
-      })
-    })
+    // this.getSetting()
+    // .then(() => {
+    //   wx.navigateTo({
+    //     url: '../driverPublishHistory/driverPublishHistory',
+    //   })
+    // })
+    // .catch(() => {
+    //   wx.showModal({
+    //     title: '授权提示',
+    //     content: '此程序需要授权才能继续进行使用！点击确定进行授权',
+    //     success(res) {
+    //       if (res.confirm) {
+    //         wx.navigateTo({
+    //           url: '../authorization/authorization',
+    //         })
+    //       }
+    //     }
+    //   })
+    // })
   },
   /**
    * wx.getSetting 授权检测
@@ -119,6 +122,7 @@ Page({
     return new Promise((resolve, reject) => {
       wx.getSetting({
         success: res => {
+          console.log('是否有授权',res.authSetting['scope.userInfo'])
           if (res.authSetting['scope.userInfo']) {
             resolve()
           } else {

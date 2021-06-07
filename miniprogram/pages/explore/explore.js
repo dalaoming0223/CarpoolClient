@@ -1,30 +1,35 @@
 // pages/explore.js
 
 const app = getApp();
-
+const {
+  config
+} = require('../../config')
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    startitem: [],
     swiperList: [{
       id: 0,
       type: 'image',
-      url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big84000.jpg'
+      url: '../../images/STU1.jpg'
     }, {
       id: 1,
         type: 'image',
-        url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big84001.jpg',
-    }, {
-      id: 2,
-      type: 'image',
-      url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big39000.jpg'
-    }, {
-      id: 3,
-      type: 'image',
-      url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'
-    }],
+        url: '../../images/STU2.jpg',
+    }, 
+    // {
+    //   id: 2,
+    //   type: 'image',
+    //   url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big39000.jpg'
+    // }, {
+    //   id: 3,
+    //   type: 'image',
+    //   url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'
+    // }
+  ],
     iconList: [{
       icon: 'cardboardfill',
       color: 'red',
@@ -35,8 +40,8 @@ Page({
       icon: 'recordfill',
       color: 'orange',
       badge: 1,
-      name: '启动日志',
-      url: '../logs/logs'
+      name: '我参与的',
+      url: '../other/myPublish/myparticipate'
     }, {
       icon: 'picfill',
       color: 'yellow',
@@ -47,7 +52,8 @@ Page({
       icon: 'noticefill',
       color: 'olive',
       badge: 22,
-      name: '通知'
+      name: '通知',
+      url: '../driverPublishConfirm/confirm'
     }, {
       icon: 'discoverfill',
       color: 'purple',
@@ -58,7 +64,7 @@ Page({
       icon: 'upstagefill',
       color: 'cyan',
       badge: 0,
-      name: '行程记录',
+      name: '我发布的',
       url: '../other/myPublish/myPublish'
     }, {
       icon: 'clothesfill',
@@ -88,9 +94,41 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.gettodaystart()
   },
 
+  gettodaystart: function () {
+    let _this = this
+    let user = wx.getStorageSync('userid')
+    wx.request({
+      url: config.api_base_url + 'participator/searchrecent/user/' + user,
+      method: 'GET',
+      header: {
+        'content-type':'application/json'
+      },
+      success:(res)=>{
+        console.log(res.data)
+        if(res.data.ret_data.queryResult){
+          _this.setData({
+            startitem: [res.data.ret_data.queryResult],
+            // starttime:
+          })
+        }
+
+
+        wx.hideLoading()
+        wx.showToast({
+          title: '加载成功',
+        })
+        setTimeout(function () {
+        }, 1000)
+        
+      },
+      fail:(err)=>{
+        console.log(err)
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -102,7 +140,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    this.gettodaystart()
   },
 
   /**

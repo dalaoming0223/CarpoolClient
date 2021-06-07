@@ -12,37 +12,88 @@ Page({
     starCount: 0,
     forksCount: 0,
     visitTotal: 0,
-    userInfo: '',
-    hasUserInfo: false
+    userInfo: {},
+    hasUserInfo: false,
+    canIUseGetUserProfile: false,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    if (wx.getUserProfile) {
+      this.setData({
+        canIUseGetUserProfile: true
+      })
+    }
     wx.getSetting({
       success: function (res) {
         if (res.authSetting['scope.userInfo']) {
           wx.getUserInfo({
             success: function (res) {
-              console.log(res.userInfo)
+              console.log('用户已经授权过:',res.userInfo)
               //用户已经授权过
+            },
+            fail: (err)=>{
+              console.log('???',err)
             }
           })
         }
       }
     })
-    if (app.globalData.userInfo) {
+    // if (app.globalData.userInfo) {
+    //   this.setData({
+    //     userInfo: app.globalData.userInfo,
+    //     hasUserInfo: true
+    //   })
+    // }else{
+    //   console.log('app.globalData.userInfo不存在')
+    // }
+    let  user =  wx.getStorageSync('userInfo')
+    if (user) {
       this.setData({
-        userInfo: app.globalData.userInfo,
+        userInfo: user,
         hasUserInfo: true
+      })
+      app.globalData.userInfo = user
+    }else{
+      console.log('缓存中user不存在')
+    }
+  },
+
+  onShow: function(options) {
+    console.log('触发onShow事件')
+    this.getUserProfile()
+    var userInfo =  wx.getStorageSync('userInfo')
+    if(userInfo && userInfo.nickName){
+      this.setData({
+          userInfo: userInfo,
+          hasUserInfo: true
       })
     }
   },
 
+  getUserProfile: function(e) {
+    let _this = this
+    wx.getUserProfile({
+      desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+      success: (res) => {
+        console.log(res.userInfo)
+        app.globalData.userInfo = res.userInfo
+        wx.setStorageSync("userInfo",res.userInfo)
+        this.loginToServer(res.userInfo, _this)
+        this.setData({
+          userInfo: res.userInfo,
+          hasUserInfo: true
+        })
+      }
+    })
+  },
+
+  // 4.13后不再支持
   bindGetUserInfo: function (e) {
     let _this = this
-    console.log(e.detail.userInfo)
+    console.log('我要获取用户信息了：',e.detail.userInfo)
     if (e.detail.userInfo) {
       let user = e.detail.userInfo
       app.globalData.userInfo = user
@@ -103,6 +154,7 @@ Page({
               code: res.code,
               avatar_url: user.avatarUrl,
               nick_name: user.nickName,
+              gender: user.gender,
               type: 100
             },
             header: {
@@ -112,12 +164,16 @@ Page({
               // console.log(user)
               // console.log('登录后返回', res.data)
               const code = res.statusCode.toString()
-
+              console.log("------res:", res.data)
               if (code.startsWith('2')) {
                 wx.setStorageSync('token', res.data.token)
                 wx.setStorageSync('openid', res.data.openid); //将openid存入本地缓存
                 wx.setStorageSync('userid', res.data.userid); //将userid存入本地缓存
-
+                if(res.data.allUserInfo.Driver){
+                  wx.setStorageSync('driverid', res.data.allUserInfo.Driver.driver_id)
+                }else{
+                  wx.setStorageSync('driverid', '')
+                }
               }
 
               wx.hideLoading({
@@ -146,12 +202,6 @@ Page({
 
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
 
   /**
    * 生命周期函数--监听页面隐藏

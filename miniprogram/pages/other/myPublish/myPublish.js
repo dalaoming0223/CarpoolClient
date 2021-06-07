@@ -33,8 +33,15 @@ Page({
           this.setData({
             dataList: dataList
           })
-          wx.hideLoading()
+
+        }else{
+          console.log('暂无数据')
         }
+        wx.hideLoading()
+      },
+      fail: (err)=>{
+        wx.hideLoading()
+        console.log('出错',err)
       }
     })
   },

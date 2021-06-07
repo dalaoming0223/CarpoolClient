@@ -12,7 +12,8 @@ Page({
     form: {},
     canChange: false, //审核状态中就不能更改
     status: '',
-    // driverNeedAuth:
+    driverNeedAuth: true,
+    show: false
   },
 
   /**
@@ -20,6 +21,12 @@ Page({
    */
   onLoad: function (options) {
     // console.log('执行onload')
+    this.getDetail()
+
+
+  },
+
+  getDetail: function () {
     let _this = this
     let driver = wx.getStorageSync('driver')
     let user = wx.getStorageSync('userid')
@@ -44,10 +51,11 @@ Page({
             driverPhone: driver_list.phone_number,
             driverCarType: driver_list.car_type,
             driverCarNum: driver_list.plate_number,
-            driverIDcard: driver_list.id_cardnum,
+            driverIDcard: driver_list.id_card,
             canChange: status === 2 ? false : true,
             status,
-            picList
+            picList,
+            form: res.data.ret_data.driver_list
           })
 
         }else{
@@ -59,19 +67,7 @@ Page({
 
       }
     })
-    // if (driver) {
-    //   console.log('此用户是司机')
-    //   this.setData({
-    //     driverNeedAuth: false
-    //   })
-    // } else {
-    //   this.setData({
-    //     driverNeedAuth: true
-    //   })
-    // }
-
   },
-
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -83,7 +79,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    this.getDetail()
   },
   ChooseImage() {
     wx.chooseImage({
@@ -193,8 +189,9 @@ Page({
               driverPhone: res.data.ret_data.phone_number,
               driverCarType: res.data.ret_data.car_type,
               driverCarNum: res.data.ret_data.plate_number,
-              driverIDcard: res.data.ret_data.id_cardnum
+              driverIDcard: res.data.ret_data.id_card
             })
+            this.onLoad()
           } else {
             wx.hideLoading()
             wx.showToast({
@@ -214,6 +211,68 @@ Page({
     })
 
 
+
+  },
+  changeInfo: function (e) {
+    this.setData({
+      show:true
+    })
+  },
+  onClose() {
+    this.setData({
+      show: false
+    });
+  },
+
+  // 订单拥有人修改订单信息。
+  submitForm: function (e) {
+    let _this = this
+    console.log(e.detail)
+    // console.log('searchObj:', searchObj)
+    let formData = e.detail.value
+    let driver_id = this.data.form.driver_id
+    wx.showModal({
+      title: '提示',
+      content: '你确定要修改吗',
+      success(res) {
+        if (res.confirm) {
+          console.log('用户点击确定修改')
+          wx.showLoading({
+            title: '修改中',
+            mask: true
+          })
+          console.log('处理提交中的formdata', formData)
+          wx.request({
+            url: config.api_base_url + 'driverAuth/update/' + driver_id,
+            method: 'PUT',
+            header: {
+              'content-type': 'application/json'
+            },
+            data: {
+              formData
+            },
+            success: (res) => {
+              wx.hideLoading()
+              _this.setData({
+                show: false
+              })
+              _this.onShow()
+            },
+            fail: (err) => {
+              console.log(err)
+              wx.showToast({
+                title: '服务器异常',
+              })
+            }
+          })
+        } else if (res.cancel) {
+          console.log('用户点击取消修改')
+          wx.hideLoading()
+        }
+      }
+    })
+  },
+  appeal: function () {
 
   },
   /**

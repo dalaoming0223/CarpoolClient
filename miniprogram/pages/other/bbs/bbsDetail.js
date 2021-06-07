@@ -1,5 +1,6 @@
 // pages/other/bbs/bbsDetail.js
 const { config } = require('../../../config')
+let userid = wx.getStorageSync('userid')
 Page({
 
   /**
@@ -8,8 +9,11 @@ Page({
   data: {
     bbsDetail: [],
     commentList: [],
+    commentListLength: '',
     hasComment: false,
-    modalShow: false
+    modalShow: false,
+    islikebythisuser: '',
+    bbs_like_count: ''
   },
 
   /**
@@ -18,9 +22,26 @@ Page({
   onLoad: function (options) {
     // console.log(options)
     let bbsDetail = JSON.parse(options.bbsDetail)
-    this.setData({
-      bbsDetail
-    })
+    let likearr = []
+    // console.log('userid',userid)
+    for(let i of bbsDetail.bbsLikes){
+      likearr.push(i.user_id)
+    }
+    // console.log('bbsDetail.bbsLikes', bbsDetail.bbsLikes)
+    if(userid in likearr){
+      this.setData({
+        bbsDetail,
+        islikebythisuser: true,
+        bbs_like_count: bbsDetail.like_count
+      })
+    }else{
+      this.setData({
+        bbsDetail,
+        islikebythisuser: false,
+        bbs_like_count: bbsDetail.like_count
+      })
+    }
+
     // console.log(bbsDetail)
     this.getComment()
   },
@@ -36,7 +57,19 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    // if(userid in bbsDetail.bbsLikes){
+    //   this.setData({
+    //     bbsDetail,
+    //     islikebythisuser: true,
+    //     bbs_like_count: bbsDetail.like_count
+    //   })
+    // }else{
+    //   this.setData({
+    //     bbsDetail,
+    //     islikebythisuser: false,
+    //     bbs_like_count: bbsDetail.like_count
+    //   })
+    // }
   },
 
   onComment: function() {
@@ -45,6 +78,71 @@ Page({
     })
   },
 
+  DisLike: function() {
+    console.log('取消点赞',this.data.bbs_like_count)
+    let _this = this
+    let bbs_id = this.data.bbsDetail.bbs_id
+    let bbs_like_count = this.data.bbs_like_count
+    // let user_id = wx.getStorageSync('userid')
+    wx.request({
+      url: config.api_base_url + 'bbs/dislike',
+      method: 'POST',
+      header: {
+        'content-type':'application/json'
+      },
+      data: {
+        bbs_id,
+        user_id: userid
+      },
+      success: (res)=>{
+        wx.showToast({
+          title: '取消点赞成功！',
+        })
+        _this.setData({
+          islikebythisuser: false,
+          bbs_like_count: bbs_like_count - 1
+        })
+        // console.log(res.data)
+      },
+      fail: (err)=>{
+        console.log(err)
+      }
+    
+    })
+  },
+
+  GiveLike: function() {
+    let _this = this
+    let bbs_id = this.data.bbsDetail.bbs_id
+    let bbs_like_count = this.data.bbs_like_count
+    // let user_id = wx.getStorageSync('userid')
+    wx.request({
+      url: config.api_base_url + 'bbs/like',
+      method: 'POST',
+      header: {
+        'content-type':'application/json'
+      },
+      data: {
+        bbs_id,
+        user_id: userid
+      },
+      success: (res)=>{
+        wx.showToast({
+          title: '点赞成功！',
+        })
+        _this.setData({
+          islikebythisuser: true,
+          bbs_like_count: bbs_like_count + 1           
+        })
+        // console.log(res.data)
+      },
+      fail: (err)=>{
+        console.log(err)
+      }
+    
+    })
+    
+  },
   onSend: function(event) {
     let _this = this
     let content = event.detail.value.content
@@ -102,11 +200,12 @@ Page({
         'content-type':'application/json'
       },
       success: (res)=>{
-        console.log('打印commentlist',res.data.ret_data.bbscomment_list.length)
+        console.log('打印commentlist长度',res.data.ret_data.bbscomment_list.length)
         if(res.data.ret_data.bbscomment_list.length != 0){
           this.setData({
             hasComment: true,
-            commentList: res.data.ret_data.bbscomment_list
+            commentList: res.data.ret_data.bbscomment_list,
+            commentListLength: res.data.ret_data.bbscomment_list.length
           })
         }
 

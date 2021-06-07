@@ -106,6 +106,8 @@ Page({
 
   // 例子  前端携带Token去发起请求。
   getDataWithToken: function () {
+    let token = this._encode()
+    console.log(token)
     wx.request({
       url: 'http://localhost:3000/v1/getAllUser', //仅为示例，并非真实的接口地址
       method: 'GET',

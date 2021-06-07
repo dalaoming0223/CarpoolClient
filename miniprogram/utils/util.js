@@ -9,6 +9,33 @@ const formatTime = date => {
   return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
 }
 
+const formatTime2 = function(date1, format) {
+  // var date = getDate(date1)
+  var date = new Date(date1);
+  var formateArr = ['Y', 'M', 'D', 'h', 'm', 's'];
+  var returnArr = [];
+  returnArr.push(date.getFullYear());
+  returnArr.push(formatNumber(date.getMonth() + 1));
+  returnArr.push(formatNumber(date.getDate()));
+  // if(formatNumber(date.getHours()) >= 8){
+  //     returnArr.push(formatNumber(date.getDate()));
+  //     returnArr.push(formatNumber(date.getHours()) -8);
+
+  // }else{
+  //     returnArr.push(formatNumber(date.getDate()) - 1);
+  //     returnArr.push(formatNumber(date.getHours()) - 8 + 24);
+
+  // }
+  returnArr.push(formatNumber(date.getHours()));
+  returnArr.push(formatNumber(date.getMinutes()));
+  returnArr.push(formatNumber(date.getSeconds()));
+  // var i in returnArr
+  for (var i = 0; i < returnArr.length ; i ++) {
+      format = format.replace(formateArr[i], returnArr[i]);
+  }
+  return format;
+}
+
 const formatNumber = n => {
   n = n.toString()
   return n[1] ? n : '0' + n
@@ -58,5 +85,6 @@ const getDateDiff = (dateTimeStamp)=>{
 }
 module.exports = {
   formatTime: formatTime,
-  getDateDiff
+  getDateDiff,
+  formatTime2
 }

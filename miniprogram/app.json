@@ -17,7 +17,17 @@
     "pages/other/driverAuth/driverAuth",
     "pages/other/bbs/bbsDetail",
     "pages/other/myPublish/myPublish",
-    "pages/other/myPublish/grade"
+    "pages/other/myPublish/grade",
+    "pages/driverPublishConfirm/confirm",
+    "pages/other/myPublish/myparticipate",
+    "pages/other/myPublish/grade2",
+    "pages/notification/notification",
+    "pages/commentConfirm/commentConfirm",
+    "pages/other/contactPeople/contactPeople",
+    "pages/other/safe/contactPeople/contactPeople",
+    "pages/other/safe/safe",
+    "pages/other/safe/contactPeople/contactPeopleadd",
+    "pages/other/safe/selfPhonenum/selfPhonenum"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -39,6 +49,12 @@
         "text": "发布",
         "iconPath": "icon/tarBar/add.png",
         "selectedIconPath": "icon/tarBar/add-active.png"
+      },
+      {
+        "pagePath": "pages/notification/notification",
+        "text": "通知",
+        "iconPath": "icon/tarBar/notification.png",
+        "selectedIconPath": "icon/tarBar/notification-active.png"
       },
       {
         "pagePath": "pages/personal/personal",

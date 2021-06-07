@@ -9,6 +9,9 @@ Page({
     blogtype: 0,
     blogList: [],
     page: 1,
+    pagecount: '',
+    searchData : '',
+    value: '',
     dynamicCard: [
       {
         title: '动态插入数据示例',
@@ -61,10 +64,16 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.getbbslist()
+
+    // this.setData({
+    //   blogList: []
+    // })
+    this.getbbslist(1)
+    // console.log('总共页数:', this.data.pagecount)
+    // console.log('当前第几页',this.data.page)
   },
 
-  getbbslist: async function() {
+  getbbslist: async function(page) {
     let _this  = this
     wx.showLoading({
       title: '加载中...',
@@ -72,25 +81,28 @@ Page({
 
 
     wx.request({
-      url: config.api_base_url + 'bbs' + '?page=' + _this.data.page,
+      url: config.api_base_url + 'bbs' + '?page=' + page,
       method: 'GET',
       header: {
         'content-type':'application/json'
       },
       success: (res)=>{
-        // console.log(res.data.ret_data.data)
-
-        if(_this.data.blogList.length != res.data.ret_data.data.length){
+        console.log('----------------------------------------')
+        console.log('console.log请求数据请求第几页的page：', page)
+        console.log(res.data.ret_data.data)
           _this.setData({
             blogList: _this.data.blogList.concat(res.data.ret_data.data),
-            bloglistLength: res.data.ret_data.total
+            pagecount: res.data.ret_data.pageCount
           })
-        }
         wx.hideLoading()
         
       },
       fail: (err)=>{
         console.log(err)
+        wx.hideLoading()
+        wx.showToast({
+          title: '服务器异常',
+        })
       }
     })
   },
@@ -102,7 +114,7 @@ Page({
   // },
 
   lookBlogDetail: function(e) {
-    console.log(e.currentTarget.dataset.item)
+    // console.log(e.currentTarget.dataset.item)
     const bbsDetail = e.currentTarget.dataset.item
     wx.navigateTo({
       // url: '../../pages/driverPublishDetail/driverPublishDetail?course=' + JSON.stringify(courseObj) + '&showType=' + this.data.showType
@@ -155,26 +167,67 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.getbbslist().then(console.log('刷新成功')).catch(err=> console.log(err))
+    this.setData({
+      blogList: [],
+      page: 1,
+      pagecount: '',
+    })
+    this.getbbslist()
+    wx.stopPullDownRefresh()
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    console.log('当前加载数量:', this.data.blogList.length)
-    console.log('当前第几页',this.data.page)
-    if(this.data.blogList.length != this.data.bloglistLength){
-      console.log()
+    console.log('总共页数:', this.data.pagecount)
+    console.log('当前this.data.page:',this.data.page)
+    if(this.data.page < this.data.pagecount){
+      console.log('当前请求第',this.data.page + 1)
       this.setData({
         page: this.data.page + 1
       })
-      this.getbbslist().then(console.log('刷新成功')).catch(err=> console.log(err))
+      this.getbbslist(this.data.page)
     }else{
+      wx.showToast({
+        title: '没有更多了',
+      })
       console.log('没有更多了')
     }
+    // this.onLoad()
   },
 
+  onChange: function (e) {
+    // console.log(e.detail)
+    this.setData({
+      searchData: e.detail
+    })
+  },
+
+  onSearch: function () {
+    let _this = this
+    console.log('搜索')
+    wx.showLoading({
+      title: '加载中',
+    })
+    wx.request({
+      url: config.api_base_url + 'bbs/search?lookingfor=' + this.data.searchData,
+      method: 'GET',
+      header: {
+        'content-type':'application/json'
+      },
+      success: (res)=>{
+        console.log(res.data.ret_data)
+        _this.setData({
+          blogList: res.data.ret_data.queryResult.rows
+        })
+        wx.hideLoading()
+      },
+      fail: (err)=>{
+        console.log(res.data.queryResult)
+      }
+    })
+  },
   /**
    * 用户点击右上角分享
    */

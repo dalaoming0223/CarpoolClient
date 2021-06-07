@@ -9,7 +9,7 @@ Component({
   properties: {
     showType: {
       type: Number,
-      title: '类型'
+      title: '类型'  //0 乘客发布  1 司机
     },
     userObj: {
       type: Object,

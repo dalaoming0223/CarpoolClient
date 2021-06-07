@@ -160,11 +160,12 @@ Page({
         title: '发布中',
         mask: true      //产生出一个蒙版，使用户不能再继续进行操作
       })
-      
+      let userInfo = wx.getStorageSync('userInfo')
       formData.startAddressInfo = this.data.startAddressInfo
       formData.endAddressInfo = this.data.endAddressInfo
       // formData.avatarUrl = this.data.userInfo.avatarUrl
-      formData.nickName = this.data.userInfo.nickName
+      formData.nickName = userInfo.nickName
+      // formData.nickName = this.data.userInfo.nickName
       formData.openid = wx.getStorageSync('openid')
       formData.userid = wx.getStorageSync('userid')
       console.log('处理提交中的formdata',formData)
@@ -175,6 +176,9 @@ Page({
           url: '../../pages/search/search',
         })
         )
+      .catch(
+        wx.hideLoading()
+      )
       
     }
   },

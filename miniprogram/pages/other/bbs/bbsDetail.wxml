@@ -50,9 +50,17 @@
         </view>
       </view> -->
       <view class="text-gray text-sm text-right padding">
-        <text class="cuIcon-attentionfill margin-lr-xs"></text> 10
-        <text class="cuIcon-appreciatefill margin-lr-xs"></text> 20
-        <text class="cuIcon-messagefill margin-lr-xs"></text> 30
+          <text class="cuIcon-attentionfill margin-lr-xs"></text>10 
+          <block wx:if="{{islikebythisuser}}">
+            <text class="cuIcon-appreciatefill margin-lr-xs text-green"  bindtap="DisLike"></text> {{bbs_like_count}}
+          </block>
+          <block wx:else>
+            <text class="cuIcon-appreciatefill margin-lr-xs "  bindtap="GiveLike"></text> {{bbsDetail.like_count}}
+          </block>
+
+          <text class="cuIcon-messagefill margin-lr-xs"></text>{{commentListLength}}
+
+
       </view>
 
       <!-- 评论 -->
@@ -75,10 +83,11 @@
             </view>
               <view class="margin-top-sm flex justify-between">
                 <view class="text-gray text-df">{{util.getDateDiff(item.created_at)}}</view>
+                <!-- 评论图标
                 <view>
                   <text class="cuIcon-appreciatefill text-red"></text>
                   <text class="cuIcon-messagefill text-gray margin-left-sm"></text>
-                </view>
+                </view> -->
               </view>
             </view>
           </view>

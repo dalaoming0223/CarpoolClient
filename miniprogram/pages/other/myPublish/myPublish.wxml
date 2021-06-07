@@ -1,5 +1,5 @@
 <!--pages/other/myPublish/myPublish.wxml-->
-<view style="margin: 16px">我的行程记录</view>
+<view style="margin: 16px">我发布的行程</view>
 <view class="card" wx:for="{{dataList}}" wx:key="index" wx:for-item="item">
   <view bindtap="doGrade" data-item="{{item}}">
     <i-card full title="拼车" extra="" thumb="">
@@ -17,7 +17,9 @@
       </view>
     </view>
     <view slot="footer">
-      <view class="cu-tag bg-{{itemstatus==0 ? 'green' : 'blue'}} light">{{itemstatus==0 ? '已完成' : '进行中'}}</view>
+      <view class="cu-tag bg-{{item.finish_status==0 ? 'red' : 'green'}} light">{{item.finish_status==0 ? '已完成' : '进行中'}}</view>
+      <view class="cu-tag round bg-orange ">开放 {{item.personNum}}人</view>
+      <view class="cu-tag round bg-purple ">已拼 {{item.driverPublishParticipators.length}}人</view>
     </view>
 </i-card>
   </view>
